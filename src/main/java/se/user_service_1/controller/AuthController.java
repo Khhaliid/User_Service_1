@@ -42,7 +42,6 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
-        log.info("register – authType={} username={}", request.getAuthType(), request.getUsername());
 
         // Check if username is already taken
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {

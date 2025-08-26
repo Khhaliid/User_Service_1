@@ -49,7 +49,8 @@ public class AuthenticationService {
                 .build();
 
         userRepository.save(user);
-        log.info("register – user saved username={}", request.getUsername());
+        //TODO remove password loging
+        log.info("register – user saved username={}, password={}", request.getUsername(), user.getPassword());
 
         // Generate JWT for the new user
         String token = jwtService.generateToken(user);
@@ -70,11 +71,6 @@ public class AuthenticationService {
      * @throws BadRequestException if credentials are invalid or user not found
      */
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        log.info("authenticate – authType={} identifier={}",
-                request.getAuthType(),
-                "API_KEY".equalsIgnoreCase(request.getAuthType())
-                        ? request.getApiKey()
-                        : request.getUsername());
 
         // Password flow: authenticate against username and password
         try {
