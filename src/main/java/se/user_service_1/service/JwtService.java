@@ -1,5 +1,6 @@
 package se.user_service_1.service;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
@@ -20,10 +21,15 @@ public class JwtService {
     private final String secret;
     private final long expiration;
 
-    public JwtService(@Value("${JWT_SECRET}") String secret,
-                      @Value("${JWT_EXPIRATION}") long expiration) {
-        this.secret = secret;
-        this.expiration = expiration;
+    public JwtService() {
+        Dotenv dotenv = Dotenv.load();
+        this.secret = dotenv.get("JWT_SECRET");
+        Long expiration1 = Long.getLong(dotenv.get("JWT_EXPIRATION"));
+        if (expiration1 == null) {
+            expiration = 86400000;
+        } else {
+            expiration = expiration1;
+        }
         log.info("JwtService initialized with expiration={}ms", expiration);
     }
 
