@@ -1,5 +1,6 @@
 package se.user_service_1.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import se.user_service_1.utils.CryptoUtils;
 import se.user_service_1.model.User;
 import se.user_service_1.repository.UserRepository;
@@ -19,6 +20,7 @@ public class UserService implements UserDetailsService {
     @Value("${master.key}")
     private String masterKey;
 
+    @Autowired
     private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
