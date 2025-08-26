@@ -16,7 +16,7 @@ import java.util.Date;
 public class JwtService {
 
     private static final Logger log = LoggerFactory.getLogger(JwtService.class);
-
+    
     private final String secret;
     private final long expiration;
 
