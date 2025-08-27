@@ -4,8 +4,11 @@ import se.user_service_1.dto.AuthenticationRequest;
 import se.user_service_1.dto.AuthenticationResponse;
 import se.user_service_1.dto.RegisterRequest;
 import se.user_service_1.exception.BadRequestException;
+import se.user_service_1.model.ActivityLog;
 import se.user_service_1.model.User;
+import se.user_service_1.repository.ActivityLogRepository;
 import se.user_service_1.repository.UserRepository;
+import se.user_service_1.service.ActivityLogService;
 import se.user_service_1.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -13,6 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import se.user_service_1.service.UserService;
+
+import java.util.Optional;
 
 /**
  * AuthController handles user registration and login.
@@ -30,6 +36,7 @@ public class AuthController {
     private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ActivityLogService activityLogService;
 
     /**
      * Registers a new user based on the authType in the request.
@@ -42,6 +49,7 @@ public class AuthController {
      */
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
+        long startTime = System.currentTimeMillis();
 
         // Check if username is already taken
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
@@ -52,6 +60,13 @@ public class AuthController {
             log.info("register – delegate to AuthenticationService for username={}", request.getUsername());
             AuthenticationResponse response = authenticationService.register(request);
             log.debug("register – returning register response for username={}", request.getUsername());
+
+            Optional<User> optionalUser = userRepository.findByUsername(request.getUsername());
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                long responseTime = System.currentTimeMillis() - startTime;
+                activityLogService.logActivity(user, ActivityLog.ActivityType.REGISTER, responseTime);
+            }
             return ResponseEntity.ok(response);
         }
     }
@@ -65,9 +80,21 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+        // Get responseTime for activityLog
+        long startTime = System.currentTimeMillis();
+
         log.info("authenticate – login attempt username={}", request.getUsername());
         AuthenticationResponse response = authenticationService.authenticate(request);
         log.info("authenticate – login successful username={}", request.getUsername());
+
+        // Log activity for the activityLog
+        Optional<User> optionalUser = userRepository.findByUsername(request.getUsername());
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            long responseTime = System.currentTimeMillis() - startTime;
+            activityLogService.logActivity(user, ActivityLog.ActivityType.LOGIN, responseTime);
+        }
+
         return ResponseEntity.ok(response);
     }
 }

@@ -1,0 +1,28 @@
+@host = http://localhost:8080
+@userPassUser = Alevander
+@userPassPassword = secret123
+
+### 1) Registrera med användarnamn & lösenord
+POST {{host}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "{{userPassUser}}",
+  "password": "{{userPassPassword}}"
+}
+
+### 2) Logga in med användarnamn & lösenord
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "{{userPassUser}}",
+  "password": "{{userPassPassword}}"
+}
+
+> {% client.global.set("token", response.body.token) %}
+
+### 3) Hämta activityLog
+GET {{host}}/activityLog
+Authorization: Bearer {{token}}
+Content-Type: application/json

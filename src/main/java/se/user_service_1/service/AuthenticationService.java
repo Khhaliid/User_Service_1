@@ -4,6 +4,7 @@ import se.user_service_1.dto.AuthenticationRequest;
 import se.user_service_1.dto.AuthenticationResponse;
 import se.user_service_1.dto.RegisterRequest;
 import se.user_service_1.exception.BadRequestException;
+import se.user_service_1.model.ActivityLog;
 import se.user_service_1.model.User;
 import se.user_service_1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final ActivityLogService activityLogService;
 
     /**
      * Registers a new user by saving to the database with an encoded password,

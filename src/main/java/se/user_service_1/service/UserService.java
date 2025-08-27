@@ -1,6 +1,5 @@
 package se.user_service_1.service;
 
-import se.user_service_1.model.User;
 import se.user_service_1.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
