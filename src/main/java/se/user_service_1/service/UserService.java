@@ -59,14 +59,27 @@ public class UserService implements UserDetailsService {
         log.info("updateUserProfile – for userId={}", currentUser.getId());
 
         // Uppdatera fälten
-        currentUser.setFirstName(request.getFirstName());
-        currentUser.setLastName(request.getLastName());
-        currentUser.setEmail(request.getEmail());
-        currentUser.setPhoneNumber(request.getPhoneNumber());
-        currentUser.setPreferredLanguage(request.getPreferredLanguage());
+        if (request.getFirstName() != null) {
+            currentUser.setFirstName(request.getFirstName());
+        }
+        if (request.getLastName() != null) {
+            currentUser.setLastName(request.getLastName());
+        }
+        if (request.getEmail() != null) {
+            currentUser.setEmail(request.getEmail());
+        }
+        if (request.getPhoneNumber() != null) {
+            currentUser.setPhoneNumber(request.getPhoneNumber());
+        }
+        if (request.getPreferredLanguage() != null) {
+            currentUser.setPreferredLanguage(request.getPreferredLanguage());
+        }
+        if (request.getTimeZone() != null) {
+            currentUser.setTimeZone(request.getTimeZone());
+        }
+
         currentUser.setEmailNotifications(request.isEmailNotifications());
         currentUser.setSmsNotifications(request.isSmsNotifications());
-        currentUser.setTimeZone(request.getTimeZone());
 
         // Spara användaren
         User savedUser = userRepository.save(currentUser);
