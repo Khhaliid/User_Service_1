@@ -26,3 +26,33 @@ Content-Type: application/json
 GET {{host}}/activityLog
 Authorization: Bearer {{token}}
 Content-Type: application/json
+
+### 4) Hämta profilinfo
+GET {{host}}/user/profile
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+### 5) Ändra profilinfo
+PUT {{host}}/user/profile
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "Alevander",
+  "lastName": "Grenander",
+  "email": "bob@gmail.com",
+  "phoneNumber": "+4670-1234567",
+  "preferredLanguage": "sv",
+  "emailNotifications": false,
+  "smsNotifications": false,
+  "timeZone": "UTC+1"
+}
+
+### 6) Ändra profilinfo (ett fält)
+PUT {{host}}/user/profile
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "Alexander"
+}

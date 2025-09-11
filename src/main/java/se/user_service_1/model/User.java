@@ -1,6 +1,5 @@
 package se.user_service_1.model;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,15 +7,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
-/**
- * User entity implementing UserDetails for authentication.
- * encryptedApiKey stores the user's API key in encrypted form.
- */
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,29 +27,54 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    // NYA PROFILFÄLT
+    @Column
+    private String firstName;
+
+    @Column
+    private String lastName;
+
+    @Column
+    private String email;
+
+    @Column
+    private String phoneNumber;
+
+    @Column
+    private String preferredLanguage = "sv";
+
+    @Column
+    private boolean emailNotifications = true;
+
+    @Column
+    private boolean smsNotifications = false;
+
+    @Column
+    private String timeZone = "Europe/Stockholm";
+
+    // UserDetails interface implementering
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // No roles/authorities used in this application
         return Collections.emptyList();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // Not tracking account expiration
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true; // Not implementing account locking
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // Not implementing credential expiration
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return true; // All users remain enabled by default
+        return true;
     }
 }

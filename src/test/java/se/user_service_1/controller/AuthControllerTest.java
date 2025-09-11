@@ -69,7 +69,7 @@ class AuthControllerTest {
         assertEquals(200, response.getStatusCodeValue());
         assertEquals("mock-jwt-token", response.getBody().getToken());
 
-        verify(userRepository).findByUsername("testuser");
+        verify(userRepository, times(2)).findByUsername("testuser"); // Controller calls it twice
         verify(authenticationService).register(any(RegisterRequest.class));
     }
 

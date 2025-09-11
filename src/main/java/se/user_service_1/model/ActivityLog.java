@@ -40,7 +40,8 @@ public class ActivityLog {
 
     public enum ActivityType {
         LOGIN,
-        REGISTER
+        REGISTER,
+        PROFILE_UPDATE
     }
 
 }
