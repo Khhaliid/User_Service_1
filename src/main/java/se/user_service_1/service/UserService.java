@@ -1,9 +1,11 @@
 package se.user_service_1.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import se.user_service_1.utils.CryptoUtils;
+import se.user_service_1.dto.UserProfileRequest;
+import se.user_service_1.dto.UserProfileResponse;
+import se.user_service_1.model.ActivityLog;
 import se.user_service_1.model.User;
 import se.user_service_1.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
@@ -20,12 +23,8 @@ public class UserService implements UserDetailsService {
     @Value("${master.key}")
     private String masterKey;
 
-    @Autowired
     private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final ActivityLogService activityLogService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -39,4 +38,56 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+    public UserProfileResponse getUserProfile(User user) {
+        log.info("getUserProfile – for userId={}", user.getId());
+        return UserProfileResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .preferredLanguage(user.getPreferredLanguage())
+                .emailNotifications(user.isEmailNotifications())
+                .smsNotifications(user.isSmsNotifications())
+                .timeZone(user.getTimeZone())
+                .build();
+    }
+
+    public UserProfileResponse updateUserProfile(User currentUser, UserProfileRequest request) {
+        long startTime = System.currentTimeMillis();
+        log.info("updateUserProfile – for userId={}", currentUser.getId());
+
+        // Uppdatera fälten
+        if (request.getFirstName() != null) {
+            currentUser.setFirstName(request.getFirstName());
+        }
+        if (request.getLastName() != null) {
+            currentUser.setLastName(request.getLastName());
+        }
+        if (request.getEmail() != null) {
+            currentUser.setEmail(request.getEmail());
+        }
+        if (request.getPhoneNumber() != null) {
+            currentUser.setPhoneNumber(request.getPhoneNumber());
+        }
+        if (request.getPreferredLanguage() != null) {
+            currentUser.setPreferredLanguage(request.getPreferredLanguage());
+        }
+        if (request.getTimeZone() != null) {
+            currentUser.setTimeZone(request.getTimeZone());
+        }
+
+        currentUser.setEmailNotifications(request.isEmailNotifications());
+        currentUser.setSmsNotifications(request.isSmsNotifications());
+
+        // Spara användaren
+        User savedUser = userRepository.save(currentUser);
+
+        // Logga aktivitet
+        long responseTime = System.currentTimeMillis() - startTime;
+        activityLogService.logActivity(savedUser, ActivityLog.ActivityType.PROFILE_UPDATE, responseTime);
+
+        return getUserProfile(savedUser);
+    }
 }

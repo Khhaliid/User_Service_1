@@ -4,6 +4,7 @@ import se.user_service_1.dto.AuthenticationRequest;
 import se.user_service_1.dto.AuthenticationResponse;
 import se.user_service_1.dto.RegisterRequest;
 import se.user_service_1.exception.BadRequestException;
+import se.user_service_1.model.ActivityLog;
 import se.user_service_1.model.User;
 import se.user_service_1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final ActivityLogService activityLogService;
 
     /**
      * Registers a new user by saving to the database with an encoded password,
@@ -49,7 +51,8 @@ public class AuthenticationService {
                 .build();
 
         userRepository.save(user);
-        log.info("register – user saved username={}", request.getUsername());
+        //TODO remove password loging
+        log.info("register – user saved username={}, password={}", request.getUsername(), user.getPassword());
 
         // Generate JWT for the new user
         String token = jwtService.generateToken(user);
@@ -70,11 +73,6 @@ public class AuthenticationService {
      * @throws BadRequestException if credentials are invalid or user not found
      */
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        log.info("authenticate – authType={} identifier={}",
-                request.getAuthType(),
-                "API_KEY".equalsIgnoreCase(request.getAuthType())
-                        ? request.getApiKey()
-                        : request.getUsername());
 
         // Password flow: authenticate against username and password
         try {
