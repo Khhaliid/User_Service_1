@@ -33,7 +33,7 @@ public class ActivityLog {
     @Column(nullable = false)
     private ActivityType activityType;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Long responseTime;
 
     @ManyToOne

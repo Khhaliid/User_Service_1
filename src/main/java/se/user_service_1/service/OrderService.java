@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import se.user_service_1.dto.OrderHistoryRequest;
 import se.user_service_1.dto.OrderResponse;
 import se.user_service_1.model.ActivityLog;
 import se.user_service_1.model.User;
@@ -41,16 +42,18 @@ public class OrderService {
 
         // Hämta alla ordrar från order-service
         String orderServiceAddress = "http://localhost:8081";
-        String url = orderServiceAddress + "/order/orderHistory/" + user.getId();
+//        String url = orderServiceAddress + "/order/orderHistory/" + user.getId();
+        String url = orderServiceAddress + "/order/orderHistory";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", token);
+        headers.set("Content-Type", "application/json");
 
-        HttpEntity<Void> entity = new HttpEntity<>(null, headers);
+        HttpEntity<OrderHistoryRequest> entity = new HttpEntity<>(new OrderHistoryRequest(), headers);
 
         ResponseEntity<List<OrderResponse>> responseEntity = restTemplate.exchange(
                 url,
-                HttpMethod.GET,
+                HttpMethod.POST,
                 entity,
                 new ParameterizedTypeReference<>() {}
         );
