@@ -25,7 +25,9 @@ public class ActivityLog {
 
     @PrePersist
     protected void onCreate() {
-        this.activityDate = LocalDateTime.now();
+        if (this.activityDate == null) {
+            this.activityDate = LocalDateTime.now();
+        }
     }
 
     @Column(nullable = false)
@@ -38,10 +40,12 @@ public class ActivityLog {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    //Lagt till ORDER_CREATED och ORDER_COMPLETED gör att göra det möjligt att logga dessa händelser
     public enum ActivityType {
         LOGIN,
         REGISTER,
-        PROFILE_UPDATE
+        PROFILE_UPDATE,
+        ORDER_COMPLETED
     }
 
 }

@@ -8,6 +8,7 @@ import se.user_service_1.model.ActivityLog;
 import se.user_service_1.model.User;
 import se.user_service_1.repository.ActivityLogRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,6 +26,23 @@ public class ActivityLogService {
                 .build();
         activityLogRepository.save(activityLog);
     }
+
+    public ActivityLog findLastOrderCompletedLog(Long userId) {
+        return activityLogRepository.findTopByUserIdAndActivityTypeOrderByActivityDateDesc(
+                userId,
+                ActivityLog.ActivityType.ORDER_COMPLETED
+        );
+    }
+
+    public void logActivityWithDate(User user, ActivityLog.ActivityType activityType, LocalDateTime dateTime) {
+        ActivityLog activityLog = ActivityLog.builder()
+                .user(user)
+                .activityType(activityType)
+                .activityDate(dateTime)
+                .build();
+        activityLogRepository.save(activityLog);
+    }
+
 
     public List<ActivityLog> findByUserId(Long userId) {
         return activityLogRepository.findByUserId(userId);

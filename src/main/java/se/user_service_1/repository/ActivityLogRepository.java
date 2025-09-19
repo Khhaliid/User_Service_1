@@ -8,4 +8,7 @@ import java.util.List;
 
 public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> {
     List<ActivityLog> findByUserId(Long id);
+
+    ActivityLog findTopByUserIdAndActivityTypeOrderByActivityDateDesc(Long userId, ActivityLog.ActivityType activityType);
+
 }
