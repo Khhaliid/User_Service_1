@@ -55,7 +55,7 @@ public class AuthenticationService {
         log.info("register – user saved username={}, password={}", request.getUsername(), user.getPassword());
 
         // Generate JWT for the new user
-        String token = jwtService.generateToken(user);
+        String token = jwtService.generateToken(user, user.getId());
         log.debug("register – jwt token generated for username={}", request.getUsername());
 
         return AuthenticationResponse.builder()
@@ -97,7 +97,7 @@ public class AuthenticationService {
                 });
 
         // Generate JWT after successful authentication
-        String token = jwtService.generateToken(user);
+        String token = jwtService.generateToken(user, user.getId());
         log.info("authenticate – login successful username={}", request.getUsername());
         return AuthenticationResponse.builder()
                 .token(token)

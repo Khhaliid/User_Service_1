@@ -16,7 +16,7 @@ import java.util.Date;
 public class JwtService {
 
     private static final Logger log = LoggerFactory.getLogger(JwtService.class);
-
+    
     private final String secret;
     private final long expiration;
 
@@ -27,11 +27,12 @@ public class JwtService {
         log.info("JwtService initialized with expiration={}ms", expiration);
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, Long userId) {
         log.debug("generateToken – start for username={}", userDetails.getUsername());
         SecretKey key = getSigningKey();
         String token = Jwts.builder()
                 .subject(userDetails.getUsername())
+                .claim("id", userId)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)
